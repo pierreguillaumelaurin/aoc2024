@@ -9,17 +9,34 @@ module Year2024
 
         input.body.chomp.lines.each do |line|
           f, s = line.split('   ')
-          first << f
-          second << s
+          first << f.to_i
+          second << s.to_i
         end
 
         first.sort!
         second.sort!
-        first.zip(second).sum { |f, s| (s.to_i - f.to_i).abs }
+        first.zip(second).sum { |f, s| (s - f).abs }
       end
 
-      def part2
-        puts 'works 2!'
+      def part2(input)
+        first = []
+        second = []
+
+        input.body.chomp.lines.each do |line|
+          f, s = line.split('   ')
+          first << f.to_i
+          second << s.to_i
+        end
+
+        first.sort!
+        second.sort!
+
+        answer = 0
+        first.each do |n|
+          answer += n * second.count(n)
+        end
+
+        answer
       end
     end
   end

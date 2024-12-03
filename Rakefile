@@ -24,6 +24,6 @@ namespace :aoc do
     end
 
     require_relative 'lib/advent_of_code'
-    AdventOfCode::CLI.run(year: year, day: 1)
+    AdventOfCode::CLI.run(year: year, day: day)
   end
 end

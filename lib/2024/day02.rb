@@ -4,31 +4,27 @@ module Year2024
   module Day02
     class << self
       def part1(input)
-        levels = parse(input)
-        levels.select(&method(:no_mistakes?)).length
+        reports = parse(input)
+        reports.select(&method(:no_bad_levels?)).length
       end
 
       def part2(input)
-        levels = parse(input)
-        levels.select(&method(:tolerates_one_bad_level?)).length
+        reports = parse(input)
+        reports.select(&method(:tolerates_one_bad_level?)).length
       end
 
       private
 
-      def at_most_one_mistake?(level)
-        no_mistakes?(level) || one_mistake?(level)
+      def no_bad_levels?(report)
+        (report.each_cons(2).all? { |a, b| a < b } ||
+      report.each_cons(2).all? { |a, b| a > b }) &&
+          report.each_cons(2).all? { |a, b| (a - b).abs >= 1 && (a - b).abs <= 3 }
       end
 
-      def no_mistakes?(level)
-        (level.each_cons(2).all? { |a, b| a < b } ||
-      level.each_cons(2).all? { |a, b| a > b }) &&
-          level.each_cons(2).all? { |a, b| (a - b).abs >= 1 && (a - b).abs <= 3 }
-      end
-
-      def tolerates_one_bad_level?(level)
-        removals = (0...level.length).count do |index|
-          test_level = level[0...index] + level[index + 1..]
-          no_mistakes?(test_level)
+      def tolerates_one_bad_level?(report)
+        removals = (0...report.length).count do |index|
+          test_report = report[0...index] + report[index + 1..]
+          no_bad_levels?(test_report)
         end
 
         removals.positive?

@@ -1,16 +1,16 @@
-# frozen-string-literal: true
+require_relative 'coordinate'
 
 module Compass
   DIRECTIONS = {
-    east: [0, 1],
-    north: [-1, 0],
-    west: [0, -1],
-    south: [1, 0],
+    east: Coordinate.new(0, 1),
+    north: Coordinate.new(-1, 0),
+    west: Coordinate.new(0, -1),
+    south: Coordinate.new(1, 0),
 
-    northeast: [-1, 1],
-    northwest: [-1, -1],
-    southeast: [1, 1],
-    southwest: [1, -1]
+    northeast: Coordinate.new(-1, 1),
+    northwest: Coordinate.new(-1, -1),
+    southeast: Coordinate.new(1, 1),
+    southwest: Coordinate.new(1, -1)
   }
 
   def self.[](direction)
@@ -29,8 +29,10 @@ module Compass
     DIRECTIONS.slice(:northeast, :northwest, :southeast, :southwest).keys
   end
 
-  def self.opposite(input)
-    direction = input.is_a?(Symbol) ? direction(input) : input
-    [-direction[0], -direction[1]]
+  def self.opposite_coordinate(input)
+    direction = input.is_a?(Symbol) ? self[input] : input
+    raise ArgumentError, "Invalid direction: #{input}" unless direction.is_a?(Coordinate)
+
+    Coordinate.new(-direction.x, -direction.y)
   end
 end

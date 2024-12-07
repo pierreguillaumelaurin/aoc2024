@@ -27,16 +27,26 @@ module Year2024
         grid = Grid.from_string(input.body.chomp)
         count = 0
 
-        grid.each_position do |pos|
-          next unless grid[*pos] == 'A'
+        grid.each_position_in_inner_grid do |pos|
+          next unless grid[pos] == 'A'
 
-          leading_to_xmas = Compass.ordinal_directions.collect { |dir| grid[] + grid[pos] + grid[pos] }.select do |line|
+          leading_to_xmas = crosswords(pos, grid).select do |line|
             line == 'MAS'
           end
-          count += leading_to_xmas.count if leading_to_xmas.count == 2
+
+          count += 1 if leading_to_xmas.count == 2
         end
 
         count
+      end
+
+      private
+
+      def crosswords(pos, grid)
+        Compass.ordinal_directions.collect do |dir|
+          direction_coordinate = Compass[dir]
+          grid[pos - direction_coordinate] + grid[pos] + grid[pos + direction_coordinate]
+        end
       end
     end
   end

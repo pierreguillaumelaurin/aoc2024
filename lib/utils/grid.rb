@@ -27,13 +27,12 @@ class Grid
   end
 
   def line(start_pos, direction, length)
-    dx, dy = Compass[direction]
+    coordinates = Compass[direction]
 
     (0...length).map do |step|
-      new_row = start_pos.x + step * dx
-      new_col = start_pos.y + step * dy
+      new_row = start_pos.x + step * coordinates.x
+      new_col = start_pos.y + step * coordinates.y
 
-      # Check if the new position is within grid bounds
       return '' if new_row.negative? || new_row >= @data.length ||
                    new_col.negative? || new_col >= @data[0].length
 
@@ -44,6 +43,14 @@ class Grid
   def each_position
     (0...@data.length).each do |x|
       (0...@data[0].length).each do |y|
+        yield Coordinate.new(x, y)
+      end
+    end
+  end
+
+  def each_position_in_inner_grid
+    (1...@data.length - 1).each do |x|
+      (1...@data[0].length - 1).each do |y|
         yield Coordinate.new(x, y)
       end
     end

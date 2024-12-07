@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative 'compass'
-require_relative 'grid'
+require_relative '../utils/compass'
+require_relative '../utils/grid'
 
 module Year2024
   module Day04

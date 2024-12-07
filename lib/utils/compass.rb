@@ -14,7 +14,7 @@ module Compass
   }
 
   def self.[](direction)
-    DIRECTIONS[direction.downcase.to_sym]
+    DIRECTIONS[direction]
   end
 
   def self.all_directions
@@ -22,10 +22,15 @@ module Compass
   end
 
   def self.cardinal_directions
-    DIRECTIONS.slice(:east, :north, :west, :south).values
+    DIRECTIONS.slice(:east, :north, :west, :south).keys
   end
 
   def self.ordinal_directions
-    DIRECTIONS.slice(:northeast, :northwest, :southeast, :southwest).values
+    DIRECTIONS.slice(:northeast, :northwest, :southeast, :southwest).keys
+  end
+
+  def self.opposite(input)
+    direction = input.is_a?(Symbol) ? direction(input) : input
+    [-direction[0], -direction[1]]
   end
 end

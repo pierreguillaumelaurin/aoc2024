@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'compass'
+require_relative 'coordinate'
 
 class Grid
   attr_reader :data
@@ -16,22 +17,21 @@ class Grid
     new(data)
   end
 
-  def neighbors(position)
-    limit_agnostic_neighbors(position)
-      .reject { |r, c| r == position[0] && c == position[1] }
-      .select do |r, c|
-      r >= 0 && r < @data.length &&
-        c >= 0 && c < @data[0].length
+  def neighbors(coordinate)
+    limit_agnostic_neighbors(coordinate)
+      .reject { |neighbor| neighbor.x == position.x && neighbor.y == position.y }
+      .select do |neighbor|
+      neighbor.x >= 0 && neighbor.x < @data.length &&
+        neighbor.y >= 0 && neighbor.y < @data[0].length
     end
   end
 
   def line(start_pos, direction, length)
-    row, col = start_pos
     dx, dy = Compass[direction]
 
     (0...length).map do |step|
-      new_row = row + step * dx
-      new_col = col + step * dy
+      new_row = start_pos.x + step * dx
+      new_col = start_pos.y + step * dy
 
       # Check if the new position is within grid bounds
       return '' if new_row.negative? || new_row >= @data.length ||
@@ -42,9 +42,9 @@ class Grid
   end
 
   def each_position
-    (0...@data.length).each do |row|
-      (0...@data[0].length).each do |col|
-        yield [row, col]
+    (0...@data.length).each do |x|
+      (0...@data[0].length).each do |y|
+        yield Coordinate.new(x, y)
       end
     end
   end
@@ -53,17 +53,16 @@ class Grid
     [@data.length, @data[0].length]
   end
 
-  def [](row, col)
-    @data[row][col]
+  def [](coordinate)
+    @data[coordinate.x][coordinate.y]
   end
 
   private
 
-  def limit_agnostic_neighbors(position)
-    row, col = position
+  def limit_agnostic_neighbors(coordinate)
     (-1..1).flat_map do |dr|
       (-1..1).map do |dc|
-        [row + dr, col + dc]
+        [coordinate.x + dr, coordinate.y + dc]
       end
     end
   end

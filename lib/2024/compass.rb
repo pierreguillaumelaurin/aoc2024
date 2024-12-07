@@ -1,12 +1,31 @@
 # frozen-string-literal: true
 
 module Compass
-  EAST  = [0, 1]
-  NORTH = [-1, 0]
-  WEST  = [0, -1]
-  SOUTH = [1, 0]
+  DIRECTIONS = {
+    east: [0, 1],
+    north: [-1, 0],
+    west: [0, -1],
+    south: [1, 0],
 
-  def self.direction(sym)
-    const_get(sym.upcase)
+    northeast: [-1, 1],
+    northwest: [-1, -1],
+    southeast: [1, 1],
+    southwest: [1, -1]
+  }
+
+  def self.[](direction)
+    DIRECTIONS[direction.downcase.to_sym]
+  end
+
+  def self.all_directions
+    DIRECTIONS.keys
+  end
+
+  def self.cardinal_directions
+    DIRECTIONS.slice(:east, :north, :west, :south).values
+  end
+
+  def self.ordinal_directions
+    DIRECTIONS.slice(:northeast, :northwest, :southeast, :southwest).values
   end
 end

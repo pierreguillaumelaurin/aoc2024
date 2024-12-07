@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# to access grid element: grid[1,1]
+require_relative 'compass'
+
 class Grid
   attr_reader :data
 
@@ -26,7 +27,7 @@ class Grid
 
   def line(start_pos, direction, length)
     row, col = start_pos
-    dx, dy = direction
+    dx, dy = Compass[direction]
 
     (0...length).map do |step|
       new_row = row + step * dx

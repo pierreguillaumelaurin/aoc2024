@@ -1,21 +1,25 @@
 # frozen_string_literal: true
 
+require_relative 'compass'
 require_relative 'grid'
 
 module Year2024
-  module Day03
+  module Day04
     class << self
       def part1(input)
         grid = Grid.from_string(input.body.chomp)
-
         count = 0
 
         grid.each_position do |pos|
-          if grid[*pos] == 'x'
-            leading_to_xmas = grid.collect { |npos| grid.line(npos) }
-            count += x_positions.collect { |x_pos| leads_to_xmas?(x_pos, dir, grid) }
+          next unless grid[*pos] == 'X'
+
+          leading_to_xmas = Compass.all_directions.collect { |dir| grid.line(pos, dir, 4) }.select do |line|
+            line == 'XMAS'
           end
+          count += leading_to_xmas.count
         end
+
+        count
       end
 
       def part2(input)

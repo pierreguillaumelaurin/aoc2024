@@ -12,7 +12,7 @@ module Year2024
 
         override_integer_comparison(rules)
 
-        updates.select { |u| u.sort == u }.count
+        updates.select { |u| u.sort == u }.collect { |u| u[u.length / 2] }.sum
       end
 
       def part2(input) end
@@ -36,8 +36,6 @@ module Year2024
             l, r = rule
             greather_than[l].nil? ? greather_than[l] = [r] : greather_than[l] << r
           end
-
-          p greather_than
 
           return -1 if greather_than[self].include? other
 

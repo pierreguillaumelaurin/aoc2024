@@ -15,7 +15,14 @@ module Year2024
         updates.select { |u| u.sort == u }.collect { |u| u[u.length / 2] }.sum
       end
 
-      def part2(input) end
+      def part2(input)
+        rules, updates = parse(input)
+
+        # not needed if part 1 is run before as it already overrides
+        override_integer_comparison(rules)
+
+        updates.reject { |u| u.sort == u }.collect(&:sort).collect { |u| u[u.length / 2] }.sum
+      end
 
       private
 
@@ -30,16 +37,16 @@ module Year2024
 
       def override_integer_comparison(rules)
         Integer.send(:define_method, :<=>) do |other|
-          greather_than = {}
+          greater_than = {}
 
           rules.each do |rule|
             l, r = rule
-            greather_than[l].nil? ? greather_than[l] = [r] : greather_than[l] << r
+            greater_than[l].nil? ? greater_than[l] = [r] : greater_than[l] << r
           end
 
-          return -1 if greather_than[self].include? other
+          return -1 if greater_than[self].include? other
 
-          return 1 if greather_than[other].include? self
+          return 1 if greater_than[other].include? self
 
           0
         end

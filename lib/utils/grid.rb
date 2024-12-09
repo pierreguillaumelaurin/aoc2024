@@ -48,6 +48,19 @@ class Grid
     end
   end
 
+  def search(value)
+    each_position do |pos|
+      return pos if self[pos] == value
+    end
+
+    nil
+  end
+
+  def swap(first_pos, second_pos)
+    @data[first_pos.x][first_pos.y], @data[second_pos.x][second_pos.y] =
+      @data[second_pos.x][second_pos.y], @data[first_pos.x][first_pos.y]
+  end
+
   def each_position_in_inner_grid
     (1...@data.length - 1).each do |x|
       (1...@data[0].length - 1).each do |y|
@@ -60,8 +73,27 @@ class Grid
     [@data.length, @data[0].length]
   end
 
+  def within_bounds?(coordinate)
+    coordinate.x >= 0 && coordinate.x < @data.length &&
+      coordinate.y >= 0 && coordinate.y < @data[0].length
+  end
+
   def [](coordinate)
     @data[coordinate.x][coordinate.y]
+  end
+
+  def []=(coordinate, value)
+    @data[coordinate.x][coordinate.y] = value
+  end
+
+  def to_s
+    @data.each do |row|
+      pp row.map(&:to_s).join
+    end
+  end
+
+  def inspect
+    to_s
   end
 
   private

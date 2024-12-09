@@ -34,17 +34,22 @@ class Coordinate
     @x == other.x && @y == other.y
   end
 
-  # Conversion to array
+  def eql?(other)
+    self == other
+  end
+
+  def hash
+    [@x, @y].hash
+  end
+
   def to_a
     [@x, @y]
   end
 
-  # String representation
   def to_s
     "(#{x},#{y})"
   end
 
-  # Inspect for debugging
   def inspect
     to_s
   end

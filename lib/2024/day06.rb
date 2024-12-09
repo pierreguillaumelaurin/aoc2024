@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Year2024
-  module Day05
+  module Day06
     class << self
       def part1(input) end
 

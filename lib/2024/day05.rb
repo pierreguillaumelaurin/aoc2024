@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../utils/compass'
-require_relative '../utils/grid'
-require_relative '../utils/coordinate'
-
 module Year2024
   module Day05
     class << self

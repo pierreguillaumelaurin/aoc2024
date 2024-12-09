@@ -35,4 +35,15 @@ module Compass
 
     Coordinate.new(-direction.x, -direction.y)
   end
+
+  def self.clockwise(direction)
+    clockwise = {
+      north: :east,
+      east: :south,
+      south: :west,
+      west: :north
+    }
+
+    clockwise[direction]
+  end
 end

@@ -34,17 +34,14 @@ class Coordinate
     @x == other.x && @y == other.y
   end
 
-  # Conversion to array
   def to_a
     [@x, @y]
   end
 
-  # String representation
   def to_s
     "(#{x},#{y})"
   end
 
-  # Inspect for debugging
   def inspect
     to_s
   end

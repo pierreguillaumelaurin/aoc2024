@@ -96,6 +96,16 @@ class Grid
     to_s
   end
 
+  def deep_copy
+    new_data = @data.map do |row|
+      row.map(&:dup)
+    rescue TypeError
+      row.map(&:itself)
+    end
+
+    self.class.new(new_data)
+  end
+
   private
 
   def limit_agnostic_neighbors(coordinate)

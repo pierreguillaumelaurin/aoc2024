@@ -12,6 +12,22 @@ module Year2024
       def part1(input)
         grid = Grid.from_string(input.body.chomp)
         position = grid.search('^')
+        guard_path = guard_path(position, grid)
+
+        guard_path.count
+      end
+
+      def part2(input)
+        grid = Grid.from_string(input.body.chomp)
+        position = grid.search('^')
+        guard_path = guard_path(position, grid)
+
+        guard_path.each.select { |obstacle_position| sabotages_patrol?(position, obstacle_position, grid) }.count
+      end
+
+      private
+
+      def guard_path(position, grid)
         direction = :north
         seen = Set[position]
 
@@ -25,10 +41,32 @@ module Year2024
           end
         end
 
-        seen.count
+        seen
       end
 
-      def part2(input) end
+      def sabotages_patrol?(position, obstacle_position, grid)
+        _grid = grid.deep_copy
+        _grid[obstacle_position] = '#'
+        raise 'Grids are equal' unless grid != _grid
+
+        direction = :north
+        seen = Set[]
+
+        while _grid.within_bounds?(candidate = position + Compass[direction])
+          if _grid[candidate] == '#'
+            direction = Compass.clockwise(direction)
+
+          elsif seen.include?([position, direction])
+            return true
+          else
+            _grid.swap(position, candidate)
+            seen.add([position, direction])
+            position = candidate
+          end
+        end
+
+        false
+      end
     end
   end
 end

@@ -8,7 +8,10 @@ module Year2024
         disk.checksum
       end
 
-      def part2(input) end
+      def part2(input)
+        disk = Disk.new(input.body.chomp)
+        disk.checksum_with_defragmentation
+      end
     end
 
     class Disk
@@ -33,6 +36,7 @@ module Year2024
       def compact
         result = uncompact
         left = 0
+
         right = result.rindex { |n| n.is_a? Integer }
 
         while left < right
@@ -56,10 +60,93 @@ module Year2024
         result
       end
 
+      def compact_with_defragmentation
+        file_blocks = {}
+        free_blocks = []
+        file_id = 0
+        pos = 0
+        @diskmap.chars.each_with_index do |slice, i|
+          slice = slice.to_i
+          if i.even?
+            file_blocks[file_id] = [pos, slice]
+            file_id += 1
+          else
+            free_blocks << [pos, slice] unless slice.zero?
+          end
+          pos += slice
+        end
+
+        while file_id.positive?
+          file_id -= 1
+          pos, size = file_blocks[file_id]
+          free_blocks.each_with_index do |(start, length), i|
+            if start >= pos
+              free_blocks = free_blocks[0...i]
+              break
+            end
+            next unless size <= length
+
+            file_blocks[file_id] = [start, size]
+            if size == length
+              free_blocks.delete_at(i)
+            else
+              free_blocks[i] = [start + size, length - size]
+            end
+            break
+          end
+        end
+        file_blocks
+      end
+
       def checksum
         compact.each.with_index.sum do |id, i|
           id.to_i * i
         end
+      end
+
+      def checksum_with_defragmentation
+        result = 0
+        compact_with_defragmentation.each do |id, (pos, size)|
+          (pos...pos + size).each do |current_pos|
+            result += id * current_pos
+          end
+        end
+
+        result
+      end
+
+      private
+
+      def find_contiguous_length(index)
+        result = uncompact
+        return 0 if index >= result.length
+
+        target_value = result[index]
+        current_index = index
+        length = 1
+
+        while current_index + 1 < result.length && result[current_index + 1] == target_value
+          current_index += 1
+          length += 1
+        end
+
+        length
+      end
+
+      def rfind_contiguous_length(index)
+        result = uncompact
+        return 0 if index >= result.length
+
+        target_value = result[index]
+        current_index = index
+        length = 1
+
+        while current_index.positive? && result[current_index - 1] == target_value
+          current_index -= 1
+          length += 1
+        end
+
+        length
       end
     end
   end

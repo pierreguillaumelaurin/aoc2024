@@ -29,7 +29,7 @@ module Year2024
                      pos2.x * (candidate.y - pos1.y) +
                      candidate.x * (pos1.y - pos2.y)).abs
 
-              if area < 0.000001 && # collinear
+              if area < 0.000001 &&
                  ((dist1 * 2 - dist2).abs < 0.000001 || (dist2 * 2 - dist1).abs < 0.000001)
                 antinodes.add(candidate)
               end
@@ -41,7 +41,33 @@ module Year2024
         antinodes.count
       end
 
-      def part2(input) end
+      def part2(input)
+        grid = Grid.from_string(input.body.chomp)
+        frequencies = {}
+        antinodes = Set.new
+
+        # census frequencies
+        grid.each_position do |coord|
+          cell = grid[coord]
+          next if cell == '.'
+
+          frequencies[cell] ||= []
+          frequencies[cell] << coord
+        end
+        # census antinodes
+        frequencies.each do |_freq, positions|
+          positions.combination(2) do |pos1, pos2|
+            grid.each_position do |candidate|
+              area = (pos1.x * (pos2.y - candidate.y) +
+                     pos2.x * (candidate.y - pos1.y) +
+                     candidate.x * (pos1.y - pos2.y)).abs
+
+              antinodes.add(candidate) if area < 0.000001
+            end
+          end
+        end
+        antinodes.count
+      end
     end
   end
 end

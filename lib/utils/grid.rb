@@ -106,6 +106,10 @@ class Grid
     self.class.new(new_data)
   end
 
+  def euclidian(first, second)
+    Math.sqrt((second.x - first.x)**2 + (second.y - first.y)**2)
+  end
+
   private
 
   def limit_agnostic_neighbors(coordinate)

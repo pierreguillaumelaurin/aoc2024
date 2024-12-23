@@ -114,40 +114,6 @@ module Year2024
 
         result
       end
-
-      private
-
-      def find_contiguous_length(index)
-        result = uncompact
-        return 0 if index >= result.length
-
-        target_value = result[index]
-        current_index = index
-        length = 1
-
-        while current_index + 1 < result.length && result[current_index + 1] == target_value
-          current_index += 1
-          length += 1
-        end
-
-        length
-      end
-
-      def rfind_contiguous_length(index)
-        result = uncompact
-        return 0 if index >= result.length
-
-        target_value = result[index]
-        current_index = index
-        length = 1
-
-        while current_index.positive? && result[current_index - 1] == target_value
-          current_index -= 1
-          length += 1
-        end
-
-        length
-      end
     end
   end
 end

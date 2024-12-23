@@ -11,34 +11,44 @@ module Year2024
         trailheads.sum(&:score)
       end
 
-      def part2(input) end
+      def part2(input)
+        grid = Grid.from_string(input.body.chomp)
+        trailheads = grid.find_all('0').collect { |pos| Trailhead.new(pos, grid) }
+        trailheads.sum(&:rating)
+      end
 
       class Trailhead
         def initialize(pos, grid)
           @pos = pos
           @grid = grid
           @summits = Set.new
+          @paths = Set.new
 
-          dfs([pos])
+          census([pos])
         end
 
         def score
           @summits.count
         end
 
+        def rating
+          @paths.count
+        end
+
         private
 
-        def dfs(path)
+        def census(path)
           pos = path.last
 
           if @grid[pos] == '9'
             @summits.add(pos)
+            @paths.add(path)
             return
           end
 
           options = @grid.orthogonal_neighbors(pos)
           options.each do |opt|
-            dfs(path + [opt]) if @grid[opt].to_i - @grid[pos].to_i == 1
+            census(path + [opt]) if @grid[opt].to_i - @grid[pos].to_i == 1
           end
         end
       end

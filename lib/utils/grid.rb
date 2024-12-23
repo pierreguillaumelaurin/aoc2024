@@ -17,13 +17,23 @@ class Grid
     new(data)
   end
 
-  def neighbors(coordinate)
-    limit_agnostic_neighbors(coordinate)
+  def neighbors(position)
+    limit_agnostic_neighbors(position)
       .reject { |neighbor| neighbor.x == position.x && neighbor.y == position.y }
       .select do |neighbor|
       neighbor.x >= 0 && neighbor.x < @data.length &&
         neighbor.y >= 0 && neighbor.y < @data[0].length
     end
+  end
+
+  def orthogonal_neighbors(position)
+    limit_agnostic_neighbors(position)
+      .reject { |neighbor| neighbor.x == position.x && neighbor.y == position.y }
+      .select do |neighbor|
+        neighbor.x >= 0 && neighbor.x < @data.length &&
+          neighbor.y >= 0 && neighbor.y < @data[0].length &&
+          (neighbor.x == position.x) ^ (neighbor.y == position.y)
+      end
   end
 
   def line(start_pos, direction, length)
@@ -54,6 +64,16 @@ class Grid
     end
 
     nil
+  end
+
+  def find_all(value)
+    positions = []
+
+    each_position do |pos|
+      positions << pos if self[pos] == value
+    end
+
+    positions
   end
 
   def swap(first_pos, second_pos)
@@ -115,7 +135,7 @@ class Grid
   def limit_agnostic_neighbors(coordinate)
     (-1..1).flat_map do |dr|
       (-1..1).map do |dc|
-        [coordinate.x + dr, coordinate.y + dc]
+        Coordinate.new(coordinate.x + dr, coordinate.y + dc)
       end
     end
   end

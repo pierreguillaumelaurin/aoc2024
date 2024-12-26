@@ -19,7 +19,7 @@ module Year2024
           frequencies[cell] << coord
         end
         # census antinodes
-        frequencies.each do |_freq, positions|
+        frequencies.each_value do |positions|
           positions.combination(2) do |pos1, pos2|
             grid.each_position do |candidate|
               dist1 = grid.euclidian(candidate, pos1)
@@ -55,7 +55,7 @@ module Year2024
           frequencies[cell] << coord
         end
         # census antinodes
-        frequencies.each do |_freq, positions|
+        frequencies.each_value do |positions|
           positions.combination(2) do |pos1, pos2|
             grid.each_position do |candidate|
               area = (pos1.x * (pos2.y - candidate.y) +

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'coordinate'
 
 module Compass
@@ -11,7 +13,7 @@ module Compass
     northwest: Coordinate.new(-1, -1),
     southeast: Coordinate.new(1, 1),
     southwest: Coordinate.new(1, -1)
-  }
+  }.freeze
 
   def self.[](direction)
     DIRECTIONS[direction]

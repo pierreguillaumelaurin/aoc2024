@@ -22,7 +22,7 @@ module Year2024
           @garden = garden
           @area = 0
           @perimeter = 0
-          @border_coordinates = Set.new
+          @coordinates = Set.new
           @name = @garden[origin]
 
           dfs(origin)
@@ -39,16 +39,66 @@ module Year2024
         private
 
         def sides
-          result = 0
+          total_sides = 0
+          grid = Array.new(@garden.dimensions[0]) { Array.new(@garden.dimensions[1], false) }
 
-          @border_coordinates.each do |pos|
-            horizontal_neighbors = @border_coordinates.count { |other| other.x == pos.x && (other.y - pos.y).abs == 1 }
-            vertical_neighbors = @border_coordinates.count { |other| other.y == pos.y && (other.x - pos.x).abs == 1 }
-
-            result += 1 if horizontal_neighbors.zero? || vertical_neighbors.zero?
+          # Mark all coordinates in our region
+          @coordinates.each do |pos|
+            grid[pos.x][pos.y] = true
           end
 
-          result
+          # Helper to check if a position is part of our region
+          is_ours = lambda { |x, y|
+            return false if x.negative? || y.negative? || x >= @garden.dimensions[0] || y >= @garden.dimensions[1]
+
+            grid[x][y]
+          }
+
+          # Find horizontal sides
+          (0...@garden.dimensions[0]).each do |x|
+            current_side = false
+            (0...@garden.dimensions[1]).each do |y|
+              is_region = is_ours.call(x, y)
+              above_diff = is_region != is_ours.call(x, y - 1)
+
+              if above_diff
+                if is_region
+                  # Starting new side
+                  current_side = true
+                else
+                  # Ending current side
+                  total_sides += 1 if current_side
+                  current_side = false
+                end
+              end
+            end
+            # End any remaining side
+            total_sides += 1 if current_side
+          end
+
+          # Find vertical sides
+          (0...@garden.dimensions[1]).each do |y|
+            current_side = false
+            (0...@garden.dimensions[0]).each do |x|
+              is_region = is_ours.call(x, y)
+              left_diff = is_region != is_ours.call(x - 1, y)
+
+              if left_diff
+                if is_region
+                  # Starting new side
+                  current_side = true
+                else
+                  # Ending current side
+                  total_sides += 1 if current_side
+                  current_side = false
+                end
+              end
+            end
+            # End any remaining side
+            total_sides += 1 if current_side
+          end
+
+          total_sides
         end
 
         def dfs(pos)
@@ -62,7 +112,7 @@ module Year2024
           @perimeter += 1 if pos.x.zero? || pos.x == @garden.dimensions[0] - 1
           @perimeter += 1 if pos.y.zero? || pos.y == @garden.dimensions[1] - 1
 
-          @border_coordinates.add(pos) if foreign_neighbors.count.positive?
+          @coordinates.add(pos)
 
           neighbors_to_visit = @garden.orthogonal_neighbors(pos)
                                       .reject { |p| @garden.seen.include?(p) }

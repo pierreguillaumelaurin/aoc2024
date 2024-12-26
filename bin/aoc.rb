@@ -16,8 +16,8 @@ when '--year'
   year = ARGV[1].to_i
   day = ARGV[2].to_i if ARGV[2]
 else
-  puts "Usage: aoc <day>"
-  puts "       aoc --year <year> <day>"
+  puts 'Usage: aoc <day>'
+  puts '       aoc --year <year> <day>'
   exit 1
 end
 

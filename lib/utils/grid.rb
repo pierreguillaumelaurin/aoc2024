@@ -99,6 +99,8 @@ class Grid
   end
 
   def [](coordinate)
+    return nil unless within_bounds?(coordinate)
+
     @data[coordinate.x][coordinate.y]
   end
 

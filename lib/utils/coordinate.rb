@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Coordinate
+  include Comparable
   attr_reader :x, :y
 
   def initialize(x, y)
@@ -32,6 +33,13 @@ class Coordinate
 
   def ==(other)
     @x == other.x && @y == other.y
+  end
+
+  def <=>(other)
+    x_comp = @x <=> other.x
+    return x_comp unless x_comp.zero?
+
+    @y <=> other.y
   end
 
   def eql?(other)

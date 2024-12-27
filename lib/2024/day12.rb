@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'forwardable'
+require_relative '../utils/compass'
 require_relative '../utils/grid'
 
 module Year2024
@@ -22,10 +23,12 @@ module Year2024
           @garden = garden
           @area = 0
           @perimeter = 0
+          @corners = 0
           @coordinates = Set.new
           @name = @garden[origin]
 
           dfs(origin)
+          find_corners
         end
 
         def price
@@ -33,86 +36,58 @@ module Year2024
         end
 
         def price_with_discount
-          @area * sides
+          @area * @corners
         end
 
         private
 
-        def sides
-          total_sides = 0
-          grid = Array.new(@garden.dimensions[0]) { Array.new(@garden.dimensions[1], false) }
-
-          # Mark all coordinates in our region
-          @coordinates.each do |pos|
-            grid[pos.x][pos.y] = true
+        def find_corners
+          corner_candidates = Set.new
+          @coordinates.each do |coord|
+            candidates = [
+              Coordinate.new(coord.x - 0.5, coord.y - 0.5),
+              Coordinate.new(coord.x + 0.5, coord.y - 0.5),
+              Coordinate.new(coord.x + 0.5, coord.y + 0.5),
+              Coordinate.new(coord.x - 0.5, coord.y + 0.5)
+            ]
+            candidates.each { |c| corner_candidates.add(c) }
           end
 
-          # Helper to check if a position is part of our region
-          is_ours = lambda { |x, y|
-            return false if x.negative? || y.negative? || x >= @garden.dimensions[0] || y >= @garden.dimensions[1]
+          corner_candidates.each do |coord|
+            config = [
+              Coordinate.new(coord.x - 0.5, coord.y - 0.5),
+              Coordinate.new(coord.x + 0.5, coord.y - 0.5),
+              Coordinate.new(coord.x + 0.5, coord.y + 0.5),
+              Coordinate.new(coord.x - 0.5, coord.y + 0.5)
+            ]
 
-            grid[x][y]
-          }
-
-          # Find horizontal sides
-          (0...@garden.dimensions[0]).each do |x|
-            current_side = false
-            (0...@garden.dimensions[1]).each do |y|
-              is_region = is_ours.call(x, y)
-              above_diff = is_region != is_ours.call(x, y - 1)
-
-              if above_diff
-                if is_region
-                  # Starting new side
-                  current_side = true
-                else
-                  # Ending current side
-                  total_sides += 1 if current_side
-                  current_side = false
-                end
-              end
+            overlaps = config.map do |overlap|
+              @coordinates.include?(Coordinate.new(overlap.x.to_i, overlap.y.to_i))
             end
-            # End any remaining side
-            total_sides += 1 if current_side
-          end
 
-          # Find vertical sides
-          (0...@garden.dimensions[1]).each do |y|
-            current_side = false
-            (0...@garden.dimensions[0]).each do |x|
-              is_region = is_ours.call(x, y)
-              left_diff = is_region != is_ours.call(x - 1, y)
+            total = overlaps.count(true)
 
-              if left_diff
-                if is_region
-                  # Starting new side
-                  current_side = true
-                else
-                  # Ending current side
-                  total_sides += 1 if current_side
-                  current_side = false
-                end
-              end
+            if total == 1
+              @corners += 1
+            elsif total == 2
+              @corners += 2 if [[true, false, true, false], [false, true, false, true]].include?(overlaps)
+            elsif total == 3
+              @corners += 1
             end
-            # End any remaining side
-            total_sides += 1 if current_side
           end
-
-          total_sides
         end
 
         def dfs(pos)
           return if @garden.seen.include? pos
 
           @garden.seen.add(pos)
+          @coordinates.add(pos)
 
           @area += 1
           foreign_neighbors = @garden.orthogonal_neighbors(pos).reject { |neighbor| @garden[neighbor] == @name }
           @perimeter += foreign_neighbors.count
           @perimeter += 1 if pos.x.zero? || pos.x == @garden.dimensions[0] - 1
           @perimeter += 1 if pos.y.zero? || pos.y == @garden.dimensions[1] - 1
-
-          @coordinates.add(pos)
 
           neighbors_to_visit = @garden.orthogonal_neighbors(pos)
                                       .reject { |p| @garden.seen.include?(p) }

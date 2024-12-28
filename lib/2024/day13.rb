@@ -19,46 +19,36 @@ module Year2024
 
         groups.sum do |group|
           a, b, price = group.split("\n").collect { |line| Coordinate.from_array(line.scan(/\d+/).collect(&:to_i)) }
-          price *= Coordinate.new(10_000_000_000_000, 10_000_000_000_000)
-          # find
+          price += Coordinate.new(10_000_000_000_000, 10_000_000_000_000)
+          optimized_minimal_token_final_position([a, b], price)
         end
       end
 
       private
 
       def minimal_token_final_position(buttons, final_position)
-        cache = Hash.new(Float::INFINITY)
-        cache[Coordinate.new(0, 0)] = 0
-
-        queue = [[Coordinate.new(0, 0), 0]]
-
-        until queue.empty?
-          position, current_tokens = queue.shift
-
-          return current_tokens if position == final_position
-          break if position.x > final_position.x || position.y > final_position.y
-
-          a, b = buttons
-          next_moves = [
-            [position + a, 3],
-            [position + b, 1],
-            [position + a + b, 4]
-          ]
-
-          next_moves.each do |next_pos, cost|
-            next if next_pos.x > final_position.x || next_pos.y > final_position.y
-
-            total_tokens = current_tokens + cost
-            if total_tokens < cache[next_pos]
-              cache[next_pos] = total_tokens
-              queue << [next_pos, total_tokens]
-            end
+        a, b = buttons
+        min_score = Float::INFINITY
+        101.times do |i|
+          101.times do |j|
+            crane_matches = (a.x * i + b.x * j == final_position.x) && (a.y * i + b.y * j == final_position.y)
+            min_score = [3 * i + j, min_score].min if crane_matches
           end
         end
+        return 0 if min_score == Float::INFINITY
 
-        return 0 if cache[final_position].infinite?
+        min_score
+      end
 
-        cache[final_position]
+      def optimized_minimal_token_final_position(buttons, final_position)
+        a, b = buttons
+
+        a_count = (b.y * final_position.x - b.x * final_position.y).to_f / (a.x * b.y - a.y * b.x)
+        b_count = (final_position.y - a.y * a_count).to_f / b.y
+
+        return 0 if a_count % 1 != 0 || b_count % 1 != 0 || a_count < 0 || b_count < 0
+
+        (a_count * 3 + b_count).to_i
       end
     end
   end

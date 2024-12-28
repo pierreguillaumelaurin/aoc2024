@@ -14,7 +14,15 @@ module Year2024
         end
       end
 
-      def part2(input) end
+      def part2(input)
+        groups = input.body.chomp.split("\n\n")
+
+        groups.sum do |group|
+          a, b, price = group.split("\n").collect { |line| Coordinate.from_array(line.scan(/\d+/).collect(&:to_i)) }
+          price *= Coordinate.new(10_000_000_000_000, 10_000_000_000_000)
+          # find
+        end
+      end
 
       private
 

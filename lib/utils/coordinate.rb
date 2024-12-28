@@ -48,6 +48,17 @@ class Coordinate
     end
   end
 
+  def /(other)
+    case other
+    when Coordinate
+      Coordinate.new(@x / other.x, @y / other.y)
+    when Array
+      Coordinate.new(@x / other[0], @y / other[1])
+    else
+      raise ArgumentError, "Cannot divide #{other.class} from Coordinate"
+    end
+  end
+
   def ==(other)
     @x == other.x && @y == other.y
   end

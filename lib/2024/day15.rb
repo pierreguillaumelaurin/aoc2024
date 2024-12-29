@@ -8,7 +8,7 @@ module Year2024
     class << self
       class Warehouse
         EMPTY = '.'
-        BOX = 'O'
+        BOXES = ['O', '[', ']'].freeze
         ROBOT = '@'
         WALL = '#'
 
@@ -26,7 +26,7 @@ module Year2024
         def coordinates_sum
           total = 0
           @grid.each_position do |pos|
-            total += 100 * pos.x + pos.y if @grid[pos] == 'O'
+            total += 100 * pos.x + pos.y if BOXES.include?(@grid[pos])
           end
           total
         end

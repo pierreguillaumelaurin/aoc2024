@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../utils/coordinate'
+require_relative '../utils/compass'
 
 module Year2024
   module Day14
@@ -21,7 +22,28 @@ module Year2024
         quadrants_safety_score(robots).reduce(:*)
       end
 
-      def part2(input) end
+      def part2(input)
+        robots = input.body.chomp.lines.collect { |line| line.scan(/-?\d+/).collect(&:to_i) }
+
+        robots = robots.collect do |px, py, vx, vy|
+          [Coordinate.new(px, py), Coordinate.new(vx, vy)]
+        end
+
+        min_safety_score = Float::INFINITY
+        min_at = Float::INFINITY
+
+        20_000.times do |i|
+          candidate = quadrants_safety_score(robots).reduce(:*)
+          if min_safety_score > candidate
+            min_safety_score = candidate
+            min_at = i
+          end
+
+          robots = tick(robots)
+        end
+
+        min_at
+      end
 
       private
 
@@ -45,6 +67,20 @@ module Year2024
         southeast = robots.select { |pos, _| pos.x > horizontal_middle && pos.y > vertical_middle }.count
 
         [northwest, northeast, southwest, southeast]
+      end
+
+      def print(robots)
+        grid = ''
+        HEIGHT.times do |i|
+          row = ''
+          WIDTH.times do |j|
+            row += robots[Coordinate.new(i, j)].nil? ? '-' : '*'
+          end
+          grid += row
+          grid += "\n"
+        end
+
+        puts grid
       end
     end
   end

@@ -12,7 +12,12 @@ module Compass
     northeast: Coordinate.new(-1, 1),
     northwest: Coordinate.new(-1, -1),
     southeast: Coordinate.new(1, 1),
-    southwest: Coordinate.new(1, -1)
+    southwest: Coordinate.new(1, -1),
+
+    '>' => Coordinate.new(0, 1),
+    '^' => Coordinate.new(-1, 0),
+    '<' => Coordinate.new(0, -1),
+    'v' => Coordinate.new(1, 0)
   }.freeze
 
   def self.[](direction)

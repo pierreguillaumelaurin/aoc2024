@@ -66,6 +66,14 @@ class Grid
     nil
   end
 
+  def find(value)
+    each_position do |pos|
+      return pos if self[pos] == value
+    end
+
+    nil
+  end
+
   def find_all(value)
     positions = []
 

@@ -35,7 +35,7 @@ module Year2024
           if grid[candidate] == '#'
             direction = Compass.clockwise(direction)
           else
-            grid.swap(position, candidate)
+            grid.swap!(position, candidate)
             seen.add(candidate)
             position = candidate
           end
@@ -59,7 +59,7 @@ module Year2024
           elsif seen.include?([position, direction])
             return true
           else
-            _grid.swap(position, candidate)
+            _grid.swap!(position, candidate)
             seen.add([position, direction])
             position = candidate
           end

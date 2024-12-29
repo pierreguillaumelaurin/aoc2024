@@ -76,7 +76,7 @@ class Grid
     positions
   end
 
-  def swap(first_pos, second_pos)
+  def swap!(first_pos, second_pos)
     @data[first_pos.x][first_pos.y], @data[second_pos.x][second_pos.y] =
       @data[second_pos.x][second_pos.y], @data[first_pos.x][first_pos.y]
   end

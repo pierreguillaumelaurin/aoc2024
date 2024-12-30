@@ -118,7 +118,7 @@ class Grid
 
   def to_s
     @data.each do |row|
-      pp row.map(&:to_s).join
+      puts row.map(&:to_s).join
     end
   end
 

@@ -14,12 +14,12 @@ module Year2024
 
         def initialize(grid)
           @grid = grid
+          @robot = @grid.find(ROBOT)
         end
 
         def move_robot!(moves)
           moves.each do |dir|
-            pos = @grid.find(ROBOT)
-            move!(pos, dir) if valid?(pos, dir)
+            move!(@robot, dir) if valid?(@robot, dir)
           end
         end
 
@@ -37,9 +37,14 @@ module Year2024
           candidate = pos + Compass[dir]
 
           raise "invalid move attempt on position #{pos} with direction #{dir}" if @grid[candidate] == WALL
-          return @grid.swap!(candidate, pos) if @grid[candidate] == EMPTY
+
+          if @grid[candidate] == EMPTY
+            @robot = candidate if @grid[pos] == ROBOT
+            return @grid.swap!(candidate, pos)
+          end
 
           move!(candidate, dir)
+          @robot = candidate if @grid[pos] == ROBOT
           @grid.swap!(candidate, pos)
         end
 
